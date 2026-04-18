@@ -148,6 +148,24 @@ sudo systemctl enable --now jscalendar-tasks@demo
 
 Instance environment files are installed under `/etc/default/craftguild/jscalendar-tasks/<instance>`. New instance files are created with `PORT=3000` and `DEMO_MODE=false`; edit each instance file before starting more than one service on the same host. If an instance file already exists, `make install` keeps it unchanged and writes the latest template to `<instance>.dist`. Instance data is stored under `/var/lib/craftguild/jscalendar-tasks/<instance>`, so each instance has its own database and attachments directory.
 
+`make install` creates a `craftguild` user and group when they do not already exist. The systemd service runs as `craftguild`, and `/var/lib/craftguild/jscalendar-tasks` is owned by that user so SQLite databases and attachments are writable without running the application as root.
+
+For demo hosts that keep a source checkout for reset jobs, install a cron entry for the `craftguild` user and call the reset script with the instance name:
+
+```bash
+scripts/reset-demo-db.sh demo
+```
+
+For example:
+
+```cron
+0 0 * * * /home/craftguild/jscalendar-tasks/scripts/reset-demo-db.sh demo
+```
+
+The script reads `/etc/default/craftguild/jscalendar-tasks/<instance>` before running migrations and seeding, so the reset targets the selected instance database and attachments directory.
+
+This reset helper intentionally relies on the source checkout that contains the script. The checkout path does not have to be `/home/craftguild/jscalendar-tasks`; any path works as long as cron calls the script from the correct checkout. `make install` creates the `craftguild` home directory, but it does not clone or update that checkout for cron jobs.
+
 ## Code of Conduct
 
 See `CODE_OF_CONDUCT.md`.

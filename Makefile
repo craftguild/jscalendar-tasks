@@ -1,5 +1,8 @@
 PROJECT_NAME := jscalendar-tasks
 VENDOR := craftguild
+SERVICE_USER := craftguild
+SERVICE_GROUP := craftguild
+SERVICE_HOME := /home/$(SERVICE_USER)
 APP_DIR := /opt/$(VENDOR)/$(PROJECT_NAME)
 RELEASES_DIR := $(APP_DIR)/releases
 CURRENT_LINK := $(APP_DIR)/current
@@ -29,8 +32,15 @@ install:
 	@test "$$(uname -s)" = "Linux" || (echo "install target supports Linux only"; exit 1)
 	@test -d .next/standalone || (echo ".next/standalone is missing. Run make build with Next.js standalone output first."; exit 1)
 	@case "$(INSTANCE)" in *[!A-Za-z0-9_.-]*|"") echo "INSTANCE must contain only letters, numbers, dot, underscore, or hyphen"; exit 1 ;; esac
-	$(SUDO) install -d "$(DATA_DIR)"
-	$(SUDO) install -d "$(INSTANCE_ATTACHMENTS_DIR)"
+	@if ! getent group "$(SERVICE_GROUP)" >/dev/null; then \
+		$(SUDO) groupadd --system "$(SERVICE_GROUP)"; \
+	fi
+	@if ! id -u "$(SERVICE_USER)" >/dev/null 2>&1; then \
+		$(SUDO) useradd --system --gid "$(SERVICE_GROUP)" --home-dir "$(SERVICE_HOME)" --create-home --shell /bin/sh "$(SERVICE_USER)"; \
+	fi
+	$(SUDO) install -d -o "$(SERVICE_USER)" -g "$(SERVICE_GROUP)" "$(SERVICE_HOME)"
+	$(SUDO) install -d -o "$(SERVICE_USER)" -g "$(SERVICE_GROUP)" "$(DATA_DIR)"
+	$(SUDO) install -d -o "$(SERVICE_USER)" -g "$(SERVICE_GROUP)" "$(INSTANCE_ATTACHMENTS_DIR)"
 	@release_id="$$(date +%s)"; \
 	release_dir="$(RELEASES_DIR)/$$release_id"; \
 	$(SUDO) install -d "$$release_dir"; \
@@ -59,3 +69,4 @@ install:
 	rm -f "$$tmp_file"
 	$(SUDO) install -d "$(SYSTEMD_DIR)"
 	$(SUDO) install -m 0644 systemd/$(SYSTEMD_UNIT) "$(SYSTEMD_DIR)/$(SYSTEMD_UNIT)"
+	$(SUDO) chown -R "$(SERVICE_USER):$(SERVICE_GROUP)" "$(APP_DIR)" "$(DATA_DIR)"
