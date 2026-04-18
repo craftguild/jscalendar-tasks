@@ -4,6 +4,26 @@ JSCalendar Tasks is a small multilingual task management app built with Next.js,
 
 This project is designed to provide a **real-world example of how JSCalendar data can be created, stored, expanded, and edited in an application**. It is intended to be more than a toy recurrence demo. The app shows how tasks are persisted, tagged, completed, filtered by history month, and exposed through an iCalendar endpoint.
 
+![JSCalendar Tasks screenshot](assets/screenshot.png)
+
+## Quick Start
+
+The Docker image is the recommended way to run JSCalendar Tasks outside local development.
+
+Run the container:
+
+```bash
+docker run --rm \
+  -p 3000:3000 \
+  ghcr.io/craftguild/jscalendar-tasks:latest
+```
+
+Then open `http://localhost:3000`.
+
+The container entrypoint runs `prisma migrate deploy` before starting the standalone Next.js server. By default, SQLite data is stored at `/app/data/jscalendar-tasks.db`, and attachments are stored at `/app/data/attachments`.
+
+For persistent data, mount a Docker volume or host directory to `/app/data`. The image is also published with commit-specific tags such as `sha-50bcf51`; use `latest` for a quick trial and a `sha-...` tag when you need to reproduce a specific build.
+
 ## Why This Project Exists
 
 `jscalendar.ts` provides a practical TypeScript implementation of the JSCalendar model. JSCalendar Tasks is intended to show how that model can be used in a product-like workflow:
@@ -34,17 +54,7 @@ If you are evaluating JSCalendar for a real application, this repository is inte
 - UI language support for English, Japanese, Simplified Chinese, Traditional Chinese, Korean, French, German, and Spanish.
 - Noto Sans based web font stack for consistent multilingual rendering.
 
-## Tech Stack
-
-- Next.js App Router
-- React
-- Prisma 6
-- SQLite
-- `@craftguild/jscalendar`
-- Tailwind CSS
-- npm
-
-## Quick Start
+## Local Development
 
 The following commands set up the local database, insert sample data, and start the development server:
 
@@ -60,24 +70,6 @@ npm run dev
 The seed data inserts two work-related tags and two work-related tasks for each supported language. Each seeded task is linked to multiple tags, recurrence rules are randomized on each seed run, and task start dates are spread across past and future dates.
 
 Then open `http://localhost:3000`.
-
-## Docker Quick Start
-
-The Docker image is the recommended way to run JSCalendar Tasks outside local development.
-
-Run the container:
-
-```bash
-docker run --rm \
-  -p 3000:3000 \
-  ghcr.io/craftguild/jscalendar-tasks:latest
-```
-
-Then open `http://localhost:3000`.
-
-The container entrypoint runs `prisma migrate deploy` before starting the standalone Next.js server. By default, SQLite data is stored at `/app/data/jscalendar-tasks.db`, and attachments are stored at `/app/data/attachments`.
-
-For persistent data, mount a Docker volume or host directory to `/app/data`. The image is also published with commit-specific tags such as `sha-50bcf51`; use `latest` for a quick trial and a `sha-...` tag when you need to reproduce a specific build.
 
 ## Architecture
 
