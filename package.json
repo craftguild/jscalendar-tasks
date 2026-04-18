@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "db:reset-demo": "prisma migrate deploy && prisma db seed",
     "release": "commit-and-tag-version",
     "release:dry-run": "commit-and-tag-version --dry-run",
     "release:prepare": "commit-and-tag-version --skip.commit --skip.tag"

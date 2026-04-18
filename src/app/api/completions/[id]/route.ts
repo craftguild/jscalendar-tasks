@@ -7,6 +7,10 @@ import {
   resolveAttachmentPath,
   sanitizeAttachmentFilename,
 } from "@/lib/attachments";
+import {
+  PUBLIC_INPUT_LIMITS,
+  normalizeMultiLineText,
+} from "@/lib/public-input";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -30,7 +34,9 @@ export async function PATCH(
   const form = await request.formData();
   const memoRaw = form.has("memo") ? String(form.get("memo") ?? "") : null;
   const memo =
-    memoRaw !== null && memoRaw.trim().length > 0 ? memoRaw.trim() : null;
+    memoRaw !== null
+      ? normalizeMultiLineText(memoRaw, PUBLIC_INPUT_LIMITS.memo) || null
+      : null;
   const removeIds = form
     .getAll("removeAttachmentIds")
     .map((value) => String(value))
@@ -38,7 +44,8 @@ export async function PATCH(
   const files = form
     .getAll("files")
     .filter((f): f is File => f instanceof File)
-    .filter((file) => file.size > 0 && file.name.trim().length > 0);
+    .filter((file) => file.size > 0 && file.name.trim().length > 0)
+    .slice(0, PUBLIC_INPUT_LIMITS.attachments);
 
   if (removeIds.length > 0) {
     const attachments = await prisma.attachment.findMany({
@@ -61,6 +68,9 @@ export async function PATCH(
 
   if (files.length > 0) {
     for (const file of files) {
+      if (file.size > PUBLIC_INPUT_LIMITS.attachmentBytes) {
+        return NextResponse.json({ error: "Attachment too large" }, { status: 413 });
+      }
       const safeName = sanitizeAttachmentFilename(file.name || "attachment");
       const filePath = buildAttachmentPath(completion.id, safeName);
       const storedPath = buildAttachmentStoragePath(completion.id, safeName);

@@ -143,6 +143,7 @@ const messages = {
     nthWeekdayLabel: "Week {value} {day}",
     tasksLoadFailed: "Failed to load events.",
     completionFailed: "Failed to mark complete.",
+    demoResetNotice: "Demo mode is enabled. Data is reset every 24 hours.",
   },
   ja: {
     appTitle: "タスク管理",
@@ -268,6 +269,7 @@ const messages = {
     nthWeekdayLabel: "{value}週目{day}",
     tasksLoadFailed: "予定の取得に失敗しました。",
     completionFailed: "対応済み登録に失敗しました。",
+    demoResetNotice: "デモモードです。データは24時間おきにリセットされます。",
   },
   zh: {
     appTitle: "任务管理",
@@ -393,6 +395,7 @@ const messages = {
     nthWeekdayLabel: "第 {value} 个{day}",
     tasksLoadFailed: "任务加载失败。",
     completionFailed: "标记完成失败。",
+    demoResetNotice: "演示模式已启用。数据每 24 小时重置一次。",
   },
   "zh-Hant": {
     appTitle: "任務管理",
@@ -518,6 +521,7 @@ const messages = {
     nthWeekdayLabel: "第 {value} 個{day}",
     tasksLoadFailed: "任務載入失敗。",
     completionFailed: "標記完成失敗。",
+    demoResetNotice: "展示模式已啟用。資料每 24 小時重置一次。",
   },
   ko: {
     appTitle: "작업 관리",
@@ -643,6 +647,7 @@ const messages = {
     nthWeekdayLabel: "{value}번째 {day}",
     tasksLoadFailed: "작업을 불러오지 못했습니다.",
     completionFailed: "완료 등록에 실패했습니다.",
+    demoResetNotice: "데모 모드입니다. 데이터는 24시간마다 초기화됩니다.",
   },
   fr: {
     appTitle: "Gestionnaire de tâches",
@@ -768,6 +773,7 @@ const messages = {
     nthWeekdayLabel: "Semaine {value} {day}",
     tasksLoadFailed: "Le chargement des tâches a échoué.",
     completionFailed: "Le marquage comme terminé a échoué.",
+    demoResetNotice: "Le mode démo est activé. Les données sont réinitialisées toutes les 24 heures.",
   },
   de: {
     appTitle: "Aufgabenverwaltung",
@@ -893,6 +899,7 @@ const messages = {
     nthWeekdayLabel: "Woche {value} {day}",
     tasksLoadFailed: "Aufgaben konnten nicht geladen werden.",
     completionFailed: "Als erledigt markieren fehlgeschlagen.",
+    demoResetNotice: "Der Demo-Modus ist aktiviert. Daten werden alle 24 Stunden zurückgesetzt.",
   },
   es: {
     appTitle: "Gestor de tareas",
@@ -1018,6 +1025,7 @@ const messages = {
     nthWeekdayLabel: "Semana {value} {day}",
     tasksLoadFailed: "No se pudieron cargar las tareas.",
     completionFailed: "No se pudo marcar como completada.",
+    demoResetNotice: "El modo demo está activado. Los datos se restablecen cada 24 horas.",
   },
 } as const;
 

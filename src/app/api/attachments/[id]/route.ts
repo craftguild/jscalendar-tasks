@@ -36,6 +36,7 @@ export async function GET(
     headers: {
       "Content-Type": attachment.contentType ?? "application/octet-stream",
       "Content-Disposition": buildContentDisposition(attachment.filename),
+      "X-Content-Type-Options": "nosniff",
     },
   });
 }

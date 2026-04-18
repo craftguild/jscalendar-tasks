@@ -1,40 +1,23 @@
 import { NextResponse } from "next/server";
+import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import type { AppJsonObject, AppJsonValue } from "@/lib/json-value";
-import { isAppJsonObject } from "@/lib/json-value";
+import type { AppJsonValue } from "@/lib/json-value";
+import {
+  PUBLIC_INPUT_LIMITS,
+  normalizeMultiLineText,
+  normalizeSingleLineText,
+  normalizeSubmittedJsCalendar,
+  normalizeTagInputs,
+} from "@/lib/public-input";
 
 export const runtime = "nodejs";
 
-type TagInput = {
-  name: string;
-  color: string;
-};
 type EventRequestBody = {
   title?: AppJsonValue;
   description?: AppJsonValue;
   jscal?: AppJsonValue;
   tags?: AppJsonValue;
 };
-
-/**
- * Narrows an app JSON value to a plain JSON object.
- */
-function isJsonObject(value: AppJsonValue): value is AppJsonObject {
-  return isAppJsonObject(value);
-}
-
-/**
- * Validates a tag payload received from the event form.
- */
-function isTagInput(tag: AppJsonValue): tag is TagInput {
-  if (!isJsonObject(tag)) return false;
-  return (
-    typeof tag.name === "string" &&
-    typeof tag.color === "string" &&
-    tag.name.trim().length > 0 &&
-    tag.color.trim().length > 0
-  );
-}
 
 /**
  * Returns one event/task record with its tags.
@@ -71,15 +54,21 @@ export async function PATCH(
 ) {
   const { id } = await params;
   const body: EventRequestBody = await request.json();
-  const title = typeof body.title === "string" ? body.title.trim() : "";
+  const title = normalizeSingleLineText(body.title, PUBLIC_INPUT_LIMITS.title);
+  const description = normalizeMultiLineText(
+    body.description,
+    PUBLIC_INPUT_LIMITS.description,
+  );
   const jscal = body.jscal;
-  const tags: TagInput[] = Array.isArray(body.tags)
-    ? body.tags.filter(isTagInput)
-    : [];
+  const tags = normalizeTagInputs(body.tags ?? null);
+  const normalizedJsCal = jscal
+    ? normalizeSubmittedJsCalendar(jscal, title, description)
+    : null;
 
-  if (!title || !jscal || !isJsonObject(jscal)) {
+  if (!title || !normalizedJsCal) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
+  const normalizedJson = normalizedJsCal as unknown as Prisma.InputJsonValue;
 
   const tagRecords = await Promise.all(
     tags.map((tag) =>
@@ -95,7 +84,7 @@ export async function PATCH(
     data: {
       title,
       notes: null,
-      jscal,
+      jscal: normalizedJson,
       tags: {
         deleteMany: {},
         create: tagRecords.map((tag, index) => ({

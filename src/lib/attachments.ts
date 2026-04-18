@@ -11,7 +11,14 @@ type AttachmentLike = {
  * Normalizes an uploaded filename so it can be stored below an attachment directory.
  */
 export function sanitizeAttachmentFilename(name: string): string {
-  return name.replace(/[\\/]+/g, "_").replace(/\s+/g, "_");
+  const sanitized = name
+    .replace(/[\u0000-\u001F\u007F]/g, "")
+    .replace(/[\\/]+/g, "_")
+    .replace(/["<>|?%*:]+/g, "_")
+    .replace(/\s+/g, "_")
+    .trim()
+    .slice(0, 120);
+  return sanitized || "attachment";
 }
 
 /**

@@ -13,9 +13,7 @@ The Docker image is the recommended way to run JSCalendar Tasks outside local de
 Run the container:
 
 ```bash
-docker run --rm \
-  -p 3000:3000 \
-  ghcr.io/craftguild/jscalendar-tasks:latest
+docker run --rm -p 3000:3000 ghcr.io/craftguild/jscalendar-tasks:latest
 ```
 
 Then open `http://localhost:3000`.
@@ -23,6 +21,12 @@ Then open `http://localhost:3000`.
 The container entrypoint runs `prisma migrate deploy` before starting the standalone Next.js server. By default, SQLite data is stored at `/app/data/jscalendar-tasks.db`, and attachments are stored at `/app/data/attachments`.
 
 For persistent data, mount a Docker volume or host directory to `/app/data`. The image is also published with commit-specific tags such as `sha-50bcf51`; use `latest` for a quick trial and a `sha-...` tag when you need to reproduce a specific build.
+
+Set `DEMO_MODE=true` to show a public demo notice on the top page. Demo databases can be reset from cron with:
+
+```bash
+DEMO_MODE=true npm run db:reset-demo
+```
 
 ## Why This Project Exists
 

@@ -1,6 +1,8 @@
 import { JsCal } from "@craftguild/jscalendar";
 import type { DayOfWeek, RecurrenceRule, TimeZoneId } from "@craftguild/jscalendar";
+import { mkdir, rm } from "node:fs/promises";
 import type { Prisma } from "../src/generated/prisma/client";
+import { getAttachmentsRoot } from "../src/lib/attachments";
 import { prisma } from "../src/lib/prisma";
 
 type SeedLanguage = "en" | "ja" | "zh" | "zh-Hant" | "ko" | "fr" | "de" | "es";
@@ -275,16 +277,16 @@ function buildTaskPayload(task: SeedTask, startDate: Date) {
 /**
  * Replaces previous seed tasks and inserts multilingual sample work tasks.
  */
-async function main() {
-  const seededTitles = seedEntries.flatMap((entry) =>
-    entry.tasks.map((task) => task.title),
-  );
+export async function seedDatabase() {
+  const attachmentsRoot = getAttachmentsRoot();
+  await rm(attachmentsRoot, { recursive: true, force: true });
+  await mkdir(attachmentsRoot, { recursive: true });
 
-  await prisma.event.deleteMany({
-    where: {
-      title: { in: seededTitles },
-    },
-  });
+  await prisma.attachment.deleteMany();
+  await prisma.completion.deleteMany();
+  await prisma.eventTag.deleteMany();
+  await prisma.event.deleteMany();
+  await prisma.tag.deleteMany();
 
   let taskIndex = 0;
   for (const entry of seedEntries) {
@@ -322,12 +324,14 @@ async function main() {
   }
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (error: unknown) => {
-    console.error(error);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+if (process.argv[1]?.endsWith("seed.ts")) {
+  seedDatabase()
+    .then(async () => {
+      await prisma.$disconnect();
+    })
+    .catch(async (error: unknown) => {
+      console.error(error);
+      await prisma.$disconnect();
+      process.exit(1);
+    });
+}

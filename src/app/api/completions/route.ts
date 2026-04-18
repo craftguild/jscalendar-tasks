@@ -11,6 +11,10 @@ import {
   getCompletionHistory,
   normalizeHistoryMonth,
 } from "@/lib/history-data";
+import {
+  PUBLIC_INPUT_LIMITS,
+  normalizeMultiLineText,
+} from "@/lib/public-input";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -56,6 +60,9 @@ export async function POST(request: Request) {
   }
 
   const completedAt = completedAtRaw ? new Date(completedAtRaw) : new Date();
+  if (Number.isNaN(completedAt.getTime())) {
+    return NextResponse.json({ error: "Invalid completedAt" }, { status: 400 });
+  }
 
   try {
     const event = await prisma.event.findUnique({
@@ -87,8 +94,8 @@ export async function POST(request: Request) {
         occurrenceId,
         completedAt,
         memo:
-          typeof memo === "string" && memo.trim().length > 0
-            ? memo.trim()
+          typeof memo === "string"
+            ? normalizeMultiLineText(memo, PUBLIC_INPUT_LIMITS.memo) || null
             : null,
         snapshot,
       },
@@ -97,9 +104,13 @@ export async function POST(request: Request) {
     const files = form
       .getAll("files")
       .filter((f): f is File => f instanceof File)
-      .filter((file) => file.size > 0 && file.name.trim().length > 0);
+      .filter((file) => file.size > 0 && file.name.trim().length > 0)
+      .slice(0, PUBLIC_INPUT_LIMITS.attachments);
     if (files.length > 0) {
       for (const file of files) {
+        if (file.size > PUBLIC_INPUT_LIMITS.attachmentBytes) {
+          return NextResponse.json({ error: "Attachment too large" }, { status: 413 });
+        }
         const safeName = sanitizeAttachmentFilename(file.name || "attachment");
         const filePath = buildAttachmentPath(completion.id, safeName);
         const storedPath = buildAttachmentStoragePath(completion.id, safeName);

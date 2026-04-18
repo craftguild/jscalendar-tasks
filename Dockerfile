@@ -24,6 +24,7 @@ FROM node:24-bookworm-slim AS runner
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
+ENV DEMO_MODE=false
 ENV DATABASE_URL=file:/app/data/jscalendar-tasks.db
 ENV ATTACHMENTS_DIR=/app/data/attachments
 ENV PRISMA_HIDE_UPDATE_MESSAGE=true

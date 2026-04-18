@@ -1,4 +1,5 @@
 import OccurrenceFeed from "@/components/OccurrenceFeed";
+import { isDemoModeEnabled } from "@/lib/demo-mode";
 import { getOccurrences, getOverdueOccurrences } from "@/lib/occurrences-data";
 
 export const runtime = "nodejs";
@@ -21,6 +22,7 @@ export default async function Home() {
     <OccurrenceFeed
       initialResult={initialResult}
       initialOverdueItems={initialOverdueItems}
+      demoMode={isDemoModeEnabled()}
     />
   );
 }

@@ -126,6 +126,7 @@ function buildMonthGroups(items: OccurrenceItem[], locale: string): MonthGroup[]
 type OccurrenceFeedProps = {
   initialResult: OccurrenceResult;
   initialOverdueItems: OccurrenceItem[];
+  demoMode?: boolean;
 };
 /**
  * Renders the upcoming occurrence feed and handles client-side infinite loading.
@@ -133,6 +134,7 @@ type OccurrenceFeedProps = {
 export default function OccurrenceFeed({
   initialResult,
   initialOverdueItems,
+  demoMode = false,
 }: OccurrenceFeedProps) {
   const { language, t } = useI18n();
   const locale = getLanguageLocale(language);
@@ -331,6 +333,11 @@ export default function OccurrenceFeed({
   }
   return (
     <PageLayout titleKey="pageUpcoming">
+      {demoMode ? (
+        <div className="rounded-md bg-surface p-4 shadow-sm">
+          {t("demoResetNotice")}
+        </div>
+      ) : null}
       {error && (
         <div className="rounded-md bg-surface p-4 shadow-sm">{error}</div>
       )}
