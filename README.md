@@ -128,11 +128,25 @@ Generate the Prisma client and build the standalone Next.js output:
 make
 ```
 
-Install the standalone output, default environment file, and systemd unit on Linux:
+Install the standalone output, one instance environment file, and the systemd template unit on Linux:
 
 ```bash
 make install
 ```
+
+`make install` prepares the `demo` instance by default. Prepare another instance by passing `INSTANCE`:
+
+```bash
+make install INSTANCE=private
+```
+
+Start an installed instance with:
+
+```bash
+sudo systemctl enable --now jscalendar-tasks@demo
+```
+
+Instance environment files are installed under `/etc/defaults/craftguild/jscalendar-tasks/<instance>`. New instance files are created with `PORT=3000` and `DEMO_MODE=false`; edit each instance file before starting more than one service on the same host. If an instance file already exists, `make install` keeps it unchanged and writes the latest template to `<instance>.dist`. Instance data is stored under `/var/lib/craftguild/jscalendar-tasks/<instance>`, so each instance has its own database and attachments directory.
 
 ## Code of Conduct
 

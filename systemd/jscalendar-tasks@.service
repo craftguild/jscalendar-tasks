@@ -1,18 +1,17 @@
 [Unit]
-Description=Progressive Works / jscalendar-tasks
+Description=Craftguild / jscalendar-tasks (%i)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-SyslogIdentifier=jscalendar-tasks
+SyslogIdentifier=jscalendar-tasks-%i
 WorkingDirectory=/opt/craftguild/jscalendar-tasks/current
 Environment=NODE_ENV=production
-Environment=PORT=3000
 Environment=HOST=0.0.0.0
 Environment=HOSTNAME=0.0.0.0
 Environment=PATH=/usr/local/bin:/usr/bin:/bin
-EnvironmentFile=-/etc/defaults/craftguild/jscalendar-tasks/jscalendar-tasks
+EnvironmentFile=/etc/defaults/craftguild/jscalendar-tasks/%i
 ExecStart=/usr/bin/env node server.js
 Restart=always
 RestartSec=5
