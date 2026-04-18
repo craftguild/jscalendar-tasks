@@ -146,7 +146,7 @@ Start an installed instance with:
 sudo systemctl enable --now jscalendar-tasks@demo
 ```
 
-Instance environment files are installed under `/etc/defaults/craftguild/jscalendar-tasks/<instance>`. New instance files are created with `PORT=3000` and `DEMO_MODE=false`; edit each instance file before starting more than one service on the same host. If an instance file already exists, `make install` keeps it unchanged and writes the latest template to `<instance>.dist`. Instance data is stored under `/var/lib/craftguild/jscalendar-tasks/<instance>`, so each instance has its own database and attachments directory.
+Instance environment files are installed under `/etc/default/craftguild/jscalendar-tasks/<instance>`. New instance files are created with `PORT=3000` and `DEMO_MODE=false`; edit each instance file before starting more than one service on the same host. If an instance file already exists, `make install` keeps it unchanged and writes the latest template to `<instance>.dist`. Instance data is stored under `/var/lib/craftguild/jscalendar-tasks/<instance>`, so each instance has its own database and attachments directory.
 
 ## Code of Conduct
 
