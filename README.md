@@ -6,6 +6,14 @@ This project is designed to provide a **real-world example of how JSCalendar dat
 
 ![JSCalendar Tasks screenshot](assets/screenshot.png)
 
+## Online Demo
+
+A public demo is available at:
+
+https://jscalendar-tasks-demo.x-apps.io
+
+The demo is intended for trying the app freely. Its data may be reset periodically.
+
 ## Quick Start
 
 The Docker image is the recommended way to run JSCalendar Tasks outside local development.

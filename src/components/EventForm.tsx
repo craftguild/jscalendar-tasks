@@ -79,6 +79,7 @@ type EventFormProps = {
   initial?: EventFormInitial | null;
   onProcessed?: () => void;
 };
+const defaultTimeZone = "Etc/UTC";
 /**
  * Formats a Date for a local datetime input.
  */
@@ -120,12 +121,15 @@ function getMonthlyMode(rule?: RecurrenceRule): MonthlyMode {
 /**
  * Converts an optional JSCalendar object into editable form state.
  */
-function toFormData(initial?: EventFormInitial | null): EventFormData {
+function toFormData(
+  initial?: EventFormInitial | null,
+  fallbackTimeZone = defaultTimeZone,
+): EventFormData {
   const base: EventFormData = {
     title: "",
     description: "",
     start: toLocalInputValue(new Date()),
-    timeZone: "Asia/Tokyo",
+    timeZone: fallbackTimeZone,
     durationHours: 1,
     durationMinutes: 0,
     recurrenceType: "single",
@@ -253,6 +257,16 @@ function toFormData(initial?: EventFormInitial | null): EventFormData {
   };
 }
 /**
+ * Returns the browser timezone when it is supported by JSCalendar.
+ */
+function getSupportedBrowserTimeZone(timeZones: readonly TimeZoneId[]) {
+  const browserTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  if (!browserTimeZone) return null;
+  return timeZones.some((timeZone) => timeZone === browserTimeZone)
+    ? browserTimeZone
+    : null;
+}
+/**
  * Renders the create/edit task form and maps form state to JSCalendar payloads.
  */
 export default function EventForm({
@@ -271,6 +285,7 @@ export default function EventForm({
   const [tagColor, setTagColor] = useState<string | null>(null);
   const [timeZoneOpen, setTimeZoneOpen] = useState(false);
   const timeZones = useMemo<readonly TimeZoneId[]>(() => JsCal.timeZones, []);
+  const [browserTimeZone, setBrowserTimeZone] = useState<string | null>(null);
   const frequencies = useMemo<FrequencyOption[]>(
     () =>
       frequencyValues.map((value) => ({
@@ -308,7 +323,7 @@ export default function EventForm({
     [t],
   );
   useEffect(() => {
-    setForm(toFormData(initial));
+    setForm(toFormData(initial, browserTimeZone ?? defaultTimeZone));
     setStatus("idle");
     setTagInput("");
     setTagDropdownOpen(false);
@@ -326,7 +341,18 @@ export default function EventForm({
     } else {
       setTagColor(null);
     }
-  }, [initial]);
+  }, [browserTimeZone, initial]);
+  useEffect(() => {
+    const supportedTimeZone = getSupportedBrowserTimeZone(timeZones);
+    setBrowserTimeZone(supportedTimeZone);
+    if (mode !== "create" || initial?.jscal) return;
+    if (!supportedTimeZone) return;
+    setForm((prev) =>
+      prev.timeZone === defaultTimeZone
+        ? { ...prev, timeZone: supportedTimeZone }
+        : prev,
+    );
+  }, [initial?.jscal, mode, timeZones]);
   useEffect(() => {
     /**
      * Loads known tags so the tag combobox can suggest existing values.
@@ -460,7 +486,7 @@ export default function EventForm({
     if (res.ok) {
       setStatus("done");
       if (mode === "create") {
-        setForm(toFormData());
+        setForm(toFormData(null, browserTimeZone ?? defaultTimeZone));
       }
     } else {
       setStatus("error");
@@ -536,7 +562,7 @@ export default function EventForm({
                   inputValue={form.timeZone}
                   onInputChange={(value) => updateField("timeZone", value)}
                   blurOnSelect
-                  placeholder="Asia/Tokyo"
+                  placeholder={defaultTimeZone}
                   buttonClassName="w-full rounded-md bg-surface px-4 py-2 shadow-sm"
                   listClassName="absolute z-20 max-h-56 w-max max-w-[70vw] overflow-auto rounded-md bg-surface p-1 shadow-md focus:outline-none"
                 />
