@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.8](https://github.com/craftguild/jscalendar-tasks/compare/v0.1.7...v0.1.8) (2026-04-18)
+
+
+### Features
+
+* run systemd service as craftguild ([860e697](https://github.com/craftguild/jscalendar-tasks/commit/860e6971c20965a99546237fc9397af7f3a03c3b))
+
 ## [0.1.7](https://github.com/craftguild/jscalendar-tasks/compare/v0.1.6...v0.1.7) (2026-04-18)
 
 
