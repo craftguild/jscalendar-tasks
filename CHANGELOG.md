@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.7](https://github.com/craftguild/jscalendar-tasks/compare/v0.1.6...v0.1.7) (2026-04-18)
+
+
+### Bug Fixes
+
+* use systemd default directory ([6d02cfa](https://github.com/craftguild/jscalendar-tasks/commit/6d02cfa969b7d5f0b8218f9ece6d7386aec874dc))
+
 ## [0.1.6](https://github.com/craftguild/jscalendar-tasks/compare/v0.1.5...v0.1.6) (2026-04-18)
 
 
