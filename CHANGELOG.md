@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.10](https://github.com/craftguild/jscalendar-tasks/compare/v0.1.9...v0.1.10) (2026-04-18)
+
+
+### Features
+
+* add online demo and browser timezone default ([2eab3c9](https://github.com/craftguild/jscalendar-tasks/commit/2eab3c9b1fb130adac2551890b129718ef8e819a))
+
 ## [0.1.9](https://github.com/craftguild/jscalendar-tasks/compare/v0.1.8...v0.1.9) (2026-04-18)
 
 

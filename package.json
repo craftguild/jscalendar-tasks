@@ -1,6 +1,6 @@
 {
   "name": "jscalendar-tasks",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "private": true,
   "packageManager": "npm@11.6.0",
   "scripts": {
