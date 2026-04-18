@@ -137,3 +137,15 @@ Install the standalone output, default environment file, and systemd unit on Lin
 ```bash
 make install
 ```
+
+## Code of Conduct
+
+See `CODE_OF_CONDUCT.md`.
+
+## Contributing
+
+See `CONTRIBUTING.md`.
+
+## License
+
+See `LICENSE`.
