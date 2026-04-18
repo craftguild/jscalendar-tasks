@@ -45,6 +45,7 @@ install:
 	release_dir="$(RELEASES_DIR)/$$release_id"; \
 	$(SUDO) install -d "$$release_dir"; \
 	$(SUDO) cp -R .next/standalone/. "$$release_dir/"; \
+	$(SUDO) install -m 0755 systemd/start.sh "$$release_dir/start.sh"; \
 	$(SUDO) install -d "$$release_dir/.next/static"; \
 	$(SUDO) cp -R .next/static/. "$$release_dir/.next/static/"; \
 	if [ -d public ]; then $(SUDO) install -d "$$release_dir/public"; $(SUDO) cp -R public/. "$$release_dir/public/"; fi; \

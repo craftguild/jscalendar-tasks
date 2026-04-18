@@ -14,7 +14,7 @@ Environment=HOST=0.0.0.0
 Environment=HOSTNAME=0.0.0.0
 Environment=PATH=/usr/local/bin:/usr/bin:/bin
 EnvironmentFile=/etc/default/craftguild/jscalendar-tasks/%i
-ExecStart=/usr/bin/env node server.js
+ExecStart=/bin/sh /opt/craftguild/jscalendar-tasks/current/start.sh
 Restart=always
 RestartSec=5
 TimeoutStopSec=30
