@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --ink: #101418;
+  --accent: #14b8a6;
+  --font-stack:
+    var(--font-noto-sans), var(--font-noto-sans-japanese),
+    var(--font-noto-sans-sc), var(--font-noto-sans-tc),
+    var(--font-noto-sans-kr), "Noto Sans", "Noto Sans JP", "Noto Sans SC",
+    "Noto Sans TC", "Noto Sans KR", sans-serif;
+  --app-font-family: var(--font-stack);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-accent: var(--accent);
+}
+
+body {
+  color: var(--ink);
+  font-family: var(--app-font-family, var(--font-stack));
+  font-size: 0.875rem;
+  letter-spacing: normal;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.modal-backdrop {
+  animation: modal-backdrop-in 180ms ease-out both;
+  background-color: rgb(0 0 0 / 0.4);
+}
+
+.modal-panel {
+  animation: modal-panel-in 180ms ease-out both;
+}
+
+.mobile-menu-panel {
+  animation: mobile-menu-panel-in 180ms ease-out both;
+}
+
+@keyframes modal-backdrop-in {
+  from {
+    background-color: rgb(0 0 0 / 0);
+  }
+  to {
+    background-color: rgb(0 0 0 / 0.4);
+  }
+}
+
+@keyframes modal-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.25rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes mobile-menu-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

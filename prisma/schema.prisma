@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id        String       @id @default(cuid())
+  title     String
+  notes     String?
+  jscal     Json
+  deletedAt DateTime?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  completions Completion[]
+  tags       EventTag[]
+}
+
+model Completion {
+  id           String       @id @default(cuid())
+  eventId      String
+  occurrenceId String
+  completedAt  DateTime
+  memo         String?
+  snapshot     Json
+  createdAt    DateTime     @default(now())
+  attachments  Attachment[]
+  event        Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, occurrenceId])
+}
+
+model Attachment {
+  id           String     @id @default(cuid())
+  completionId String
+  filename     String
+  path         String
+  contentType  String?
+  size         Int?
+  createdAt    DateTime   @default(now())
+  completion   Completion @relation(fields: [completionId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  color     String
+  createdAt DateTime   @default(now())
+  events    EventTag[]
+}
+
+model EventTag {
+  eventId   String
+  tagId     String
+  color     String
+  position  Int      @default(0)
+  event     Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tag       Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([eventId, tagId])
+}

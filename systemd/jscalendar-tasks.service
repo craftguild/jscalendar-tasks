@@ -1,0 +1,25 @@
+[Unit]
+Description=Progressive Works / jscalendar-tasks
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+SyslogIdentifier=jscalendar-tasks
+WorkingDirectory=/opt/craftguild/jscalendar-tasks/current
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOST=0.0.0.0
+Environment=HOSTNAME=0.0.0.0
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=-/etc/defaults/craftguild/jscalendar-tasks/jscalendar-tasks
+ExecStart=/usr/bin/env node server.js
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGINT
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
