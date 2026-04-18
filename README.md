@@ -57,34 +57,27 @@ npm exec prisma db seed
 npm run dev
 ```
 
+The seed data inserts two work-related tags and two work-related tasks for each supported language. Each seeded task is linked to multiple tags, recurrence rules are randomized on each seed run, and task start dates are spread across past and future dates.
+
 Then open `http://localhost:3000`.
 
 ## Docker Quick Start
 
-The Docker image is the recommended way to run JSCalendar Tasks outside local development. Use the published image from GitHub Container Registry:
-
-```bash
-docker pull ghcr.io/<owner>/jscalendar-tasks:sha-<commit>
-```
-
-Create a Docker volume for the SQLite database and attachments:
-
-```bash
-docker volume create jscalendar-tasks-data
-```
+The Docker image is the recommended way to run JSCalendar Tasks outside local development.
 
 Run the container:
 
 ```bash
 docker run --rm \
   -p 3000:3000 \
-  -v jscalendar-tasks-data:/app/data \
-  ghcr.io/<owner>/jscalendar-tasks:sha-<commit>
+  ghcr.io/craftguild/jscalendar-tasks:latest
 ```
 
 Then open `http://localhost:3000`.
 
 The container entrypoint runs `prisma migrate deploy` before starting the standalone Next.js server. By default, SQLite data is stored at `/app/data/jscalendar-tasks.db`, and attachments are stored at `/app/data/attachments`.
+
+For persistent data, mount a Docker volume or host directory to `/app/data`. The image is also published with commit-specific tags such as `sha-50bcf51`; use `latest` for a quick trial and a `sha-...` tag when you need to reproduce a specific build.
 
 ## Architecture
 
@@ -103,59 +96,6 @@ In short, the flow is:
 - Completion records.
 - iCalendar export.
 
-## Adding A Locale
-
-English is the default locale and the fallback locale. New languages should be added in a way that keeps the app usable even when a translation is incomplete.
-
-To add another locale:
-
-1. Add the language code to `LanguageCode` in `src/lib/language.ts`.
-2. Add a `LANGUAGE_PROFILES` entry with the HTML `lang` value.
-3. Add the `LANGUAGE_LOCALES` entry used by `Intl` date, weekday, and month formatting.
-4. Add the language option label keys in `src/lib/i18n.tsx`.
-5. Add a message dictionary in `src/lib/i18n.tsx`.
-6. Add the language to `LanguageSelector` so users can select it.
-7. Add seed data for the locale in `prisma/seed.ts` if sample content should demonstrate that language.
-
-Date, weekday, and month names should prefer `Intl` formatting instead of hard-coded translated strings. This keeps locale-specific ordering and punctuation aligned with the user's language. Font support is centralized through the Noto Sans web font stack in `src/lib/language.ts` and `src/app/layout.tsx`, so new locales should reuse that stack unless the language requires a separate script-specific font. If a message is not available, the app should fall back to English rather than rendering an empty label.
-
-## Development
-
-Install the dependencies:
-
-```bash
-npm install
-```
-
-Create an environment file if you need one:
-
-```bash
-DATABASE_URL="file:data/jscalendar-tasks.db"
-```
-
-Generate the Prisma client and apply the migrations:
-
-```bash
-npm exec prisma generate
-npm exec prisma migrate dev
-```
-
-Seed the sample data:
-
-```bash
-npm exec prisma db seed
-```
-
-The seed data inserts two work-related tags and two work-related tasks for each supported language. Each seeded task is linked to multiple tags, recurrence rules are randomized on each seed run, and task start dates are spread across past and future dates.
-
-Start the development server:
-
-```bash
-npm run dev
-```
-
-Then open `http://localhost:3000`.
-
 ## Useful Commands
 
 Run lint:
@@ -170,6 +110,12 @@ Build the app:
 npm run build
 ```
 
+Run tests:
+
+```bash
+npm test
+```
+
 Run the production server after building:
 
 ```bash
@@ -178,60 +124,16 @@ npm run start
 
 ## Release Helpers
 
-The repository includes a minimal Makefile for environments where Docker is not available. It builds and installs the standalone Next.js output directly on a Linux host.
+The repository includes a minimal Makefile for environments where Docker is not available. The systemd files are provided as a fallback deployment option for Linux hosts that cannot run Docker; for production deployments, the Docker image is the primary supported path.
 
-Generate the Prisma client:
-
-```bash
-make prepare
-```
-
-Build the standalone Next.js output:
+Generate the Prisma client and build the standalone Next.js output:
 
 ```bash
-make build
+make
 ```
 
 Install the standalone output, default environment file, and systemd unit on Linux:
 
 ```bash
 make install
-```
-
-## systemd
-
-The systemd files are provided as a fallback deployment option for Linux hosts that cannot run Docker. For production deployments, the Docker image is the primary supported path.
-
-The project includes:
-
-- `Makefile`
-- `systemd/jscalendar-tasks.service`
-- `systemd/defaults/jscalendar-tasks.env`
-
-The default systemd settings are:
-
-- app dir: `/opt/craftguild/jscalendar-tasks`
-- releases dir: `/opt/craftguild/jscalendar-tasks/releases/<timestamp>`
-- current release symlink: `/opt/craftguild/jscalendar-tasks/current`
-- service name: `jscalendar-tasks.service`
-- port: `3000`
-- env file: `/etc/defaults/craftguild/jscalendar-tasks/jscalendar-tasks`
-- data dir: `/var/lib/craftguild/jscalendar-tasks`
-- attachments dir: `/var/lib/craftguild/jscalendar-tasks/attachments`
-
-Install the app and unit files:
-
-```bash
-make install
-```
-
-The default env file contains:
-
-```bash
-NODE_ENV=production
-PORT=3000
-HOST=0.0.0.0
-HOSTNAME=0.0.0.0
-DATABASE_URL="file:/var/lib/craftguild/jscalendar-tasks/jscalendar-tasks.db"
-ATTACHMENTS_DIR="/var/lib/craftguild/jscalendar-tasks/attachments"
 ```
